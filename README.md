@@ -8,7 +8,8 @@ App running with [Nest](https://github.com/nestjs/nest) framework TypeScript sta
   
 ```bash  
 $ yarn
-```  
+```
+This project use private package with verdaccio (.npmrc_config and .yarnrc_config). If you want to install this project, please let me know at yanndumas54230@gmail.com.
   
 ## Running the app  
   
