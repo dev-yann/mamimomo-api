@@ -1,0 +1,53 @@
+image: node:10.15.3
+
+pipelines:
+  branches:
+    master:
+      - step:
+          name: Build and test
+          deployment: stage
+          caches:
+            - node
+          script:
+            - mv .yarnrc_config .yarnrc
+            - mv .npmrc_config .npmrc
+            - yarn
+            - yarn build
+      - step:
+          name: Deploy to stage
+          deployment: stage
+          caches :
+            - node
+          script:
+            - mv .npmrc_config .npmrc
+            - yarn
+            - yarn build
+            - export ENV_STAGE=$ENV_STAGE
+            - ssh debian@51.38.232.41 -o SendEnv=ENV_STAGE 'cd stage/mamimomo/mamimomo-api/source; echo "$ENV_STAGE" | base64 --decode > .env; git pull; docker-compose up -d'
+            - yarn deploy:stage
+            - echo "Have a good day"
+      - step:
+          name: Deploy to prod
+          trigger: manual
+          deployment: production
+          caches:
+            - node
+          script:
+            - npm install pm2 -g
+            - export ENV_PRODUCTION=$ENV_PRODUCTION
+            - ssh debian@51.38.232.41 -o SendEnv=ENV_PRODUCTION 'cd production/mamimomo/mamimomo-api/source; echo "$ENV_PRODUCTION" | base64 --decode > .env;'
+            - yarn deploy:production
+            - echo "Have a good day"
+    feature/*:
+      - step:
+          name: Build, Test
+          deployment: stage
+          caches:
+            - node
+          script:
+            - mv .yarnrc_config .yarnrc
+            - mv .npmrc_config .npmrc
+            - yarn
+            - yarn build
+            - echo "Have a good day"
+            #            - yarn test

@@ -1,0 +1,4 @@
+@mamimomo:registry=http://51.38.232.41/
+//51.38.232.41/:_authToken=${NPM_TOKEN}
+scope=@mamimomo
+always-auth=true

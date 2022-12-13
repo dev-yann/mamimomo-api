@@ -1,0 +1,27 @@
+version: '3.7'
+services:
+  db:
+    image: api-db
+    build:
+      context: ./
+      dockerfile: docker/postgresql/Dockerfile
+    restart: always
+    volumes:
+      - ./docker/data/postgresql:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${PGSQL_ROOT_PASSWORD}
+      POSTGRES_DB: ${PGSQl_DATABASE_NAME}
+      POSTGRES_USER: ${PGSQL_USER}
+    ports:
+      - ${PGSQL_PORT}:5432
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 5555:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGSQL_ROOT_PASSWORD}
